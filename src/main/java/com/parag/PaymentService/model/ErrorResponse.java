@@ -1,5 +1,9 @@
 package com.parag.PaymentService.model;
 
+/*
+* This class is used by the Controller Advice to return as error object with
+* errorMessage and errorCode to end user or whomever call the API.
+* */
 public class ErrorResponse {
     private String errorMessage;
     private String errorCode;

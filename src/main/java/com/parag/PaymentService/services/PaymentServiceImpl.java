@@ -2,7 +2,9 @@ package com.parag.PaymentService.services;
 
 import com.parag.PaymentService.entity.TransactionDetails;
 import com.parag.PaymentService.exceptions.PaymentCustomException;
+import com.parag.PaymentService.model.PaymentMode;
 import com.parag.PaymentService.model.PaymentRequest;
+import com.parag.PaymentService.model.PaymentResponse;
 import com.parag.PaymentService.repository.TransactionDetailsRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,5 +42,37 @@ public class PaymentServiceImpl implements PaymentService{
         log.info("Transaction is completed with id {}", transactionDetails.getId());
 
         return transactionDetails.getId();
+    }
+
+    @Override
+    public PaymentResponse getPaymentDetails(long id) {
+        log.info("Getting the payment details for id {}", id);
+
+//        TransactionDetails transactionDetails;
+//        try {
+//            transactionDetails = transactionDetailsRepository
+//                    .findByOrderId(id);
+//        } catch (Exception e) {
+//            log.info("Getting error for the payment details for id {}", id);
+//            throw new PaymentCustomException("Payment with given order ID not found",
+//                    "PAYMENT_DETAILS_NOT_FOUND");
+//        }
+
+        TransactionDetails transactionDetails = transactionDetailsRepository
+                    .findByOrderId(id)
+                .orElseThrow(() -> new PaymentCustomException("Payment with given order ID not found",
+                   "PAYMENT_DETAILS_NOT_FOUND"));
+
+
+        PaymentResponse paymentResponse = new PaymentResponse(
+                transactionDetails.getId(),
+                transactionDetails.getOrderId(),
+                transactionDetails.getPaymentStatus(),
+                PaymentMode.valueOf(transactionDetails.getPaymentMode()),
+                transactionDetails.getPaymentDate(),
+                transactionDetails.getAmount()
+        );
+
+        return paymentResponse;
     }
 }
